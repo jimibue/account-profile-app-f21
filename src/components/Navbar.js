@@ -32,7 +32,7 @@ const Navbar = () => {
       <NavLink to="/account/profile">
         <Menu.Item>
           {/* Will be replaced with the actual username */}
-          {value.username}
+          {`${value.username} has ${value.cats.length} cats`}
         </Menu.Item>
       </NavLink>
     </Menu>

@@ -1,46 +1,49 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import { Form } from "semantic-ui-react";
-import { AccountConsumer } from "../providers/AccountProvider";
+import { AccountContext } from "../providers/AccountProvider";
 
-class AccountForm extends React.Component {
-  state = {
-    username: this.props.username,
-    membershipLevel: this.props.membershipLevel,
+const AccountForm = () => {
+  const { username, membershipLevel, updateAccount } =
+    useContext(AccountContext);
+  const [formData, setFormData] = useState({
+    username: username,
+    membershipLevel: membershipLevel,
+  });
+
+  const handleChange = (e, { name, value }) => {
+    // this.setState({ [name]: value });
+    // es6 cloing form data in a new objec and update
+    // which ever input was changed
+    setFormData({ ...formData, [name]: value });
   };
 
-  handleChange = (e, { name, value }) => this.setState({ [name]: value });
-
-  handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    this.props.updateAccount(this.state);
+    updateAccount(formData);
   };
 
-  render() {
-    const { username, membershipLevel } = this.state;
-    return (
-      <Form onSubmit={this.handleSubmit}>
-        <Form.Input
-          label="New Username"
-          type="text"
-          name="username"
-          value={username}
-          onChange={this.handleChange}
-        />
-        <Form.Select
-          label="Membership Level"
-          name="membershipLevel"
-          value={membershipLevel}
-          onChange={this.handleChange}
-          options={membershipOptions}
-        />
-        <Form.Button color="blue">Save</Form.Button>
-        <p>{this.props.someOtherProp}</p>
-        <p>{this.props.x}</p>
-        <p>{this.props.y}</p>
-      </Form>
-    );
-  }
-}
+  return (
+    <Form onSubmit={handleSubmit}>
+      <Form.Input
+        label="New Username"
+        type="text"
+        name="username"
+        value={formData.username}
+        onChange={handleChange}
+      />
+      <Form.Select
+        label="Membership Level"
+        name="membershipLevel"
+        value={formData.membershipLevel}
+        onChange={handleChange}
+        options={membershipOptions}
+      />
+      <Form.Button color="blue">Save</Form.Button>
+    </Form>
+  );
+};
+
+export default AccountForm;
 
 const membershipOptions = [
   { key: "b", text: "Bronze", value: "Bronze" },
@@ -48,20 +51,3 @@ const membershipOptions = [
   { key: "g", text: "Gold", value: "Gold" },
   { key: "p", text: "Platinum", value: "Platinum" },
 ];
-
-const ConnectedAccountForm = (props) => {
-  return (
-    <AccountConsumer>
-      {(value) => (
-        <AccountForm
-          {...props}
-          username={value.username}
-          membershipLevel={value.membershipLevel}
-          updateAccount={value.updateAccount}
-        />
-      )}
-    </AccountConsumer>
-  );
-};
-
-export default ConnectedAccountForm;
